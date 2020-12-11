@@ -9,20 +9,19 @@ import java.util.Objects;
 public class User {
     @Id()
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+    private Integer id;
 
 
-
-    public long getId() {
+    public Integer getId() {
         return this.id;
     }
 
-    public void setId(long newID) {
+    public void setId(Integer newID) {
         this.id = newID;
     }
 
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     @Size(max = 255)
     private String username;
 
@@ -35,7 +34,7 @@ public class User {
     }
 
 
-    @Column(nullable = false)
+    @Column(name = "password", nullable = false)
     @Size(max = 255)
     private String password;
 
@@ -51,8 +50,8 @@ public class User {
         ROLE_USER, ROLE_ADMIN
     }
 
-    @Size(max = 255)
     @Enumerated(EnumType.STRING)
+
     private UserRole role;
 
     public UserRole getRole() {
@@ -88,7 +87,7 @@ public class User {
     public User() {
     }
 
-    public User(long id, String username, String password, UserRole role, LocalDate creationDate, LocalDate updatedDate) {
+    public User(Integer id, String username, String password, UserRole role, LocalDate creationDate, LocalDate updatedDate) {
         setId(id);
         setUsername(username);
         setPassword(password);
@@ -96,6 +95,7 @@ public class User {
         setCreationDate(creationDate);
         setUpdatedDate(updatedDate);
     }
+
     public User(String username, String password) {
         this.username = username;
         this.password = password;
@@ -106,7 +106,7 @@ public class User {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return getId() == user.getId() &&
+        return getId().equals(user.getId()) &&
                 getUsername().equals(user.getUsername()) &&
                 getPassword().equals(user.getPassword()) &&
                 getRole() == user.getRole() &&
