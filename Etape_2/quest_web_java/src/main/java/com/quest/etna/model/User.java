@@ -51,7 +51,6 @@ public class User {
     }
 
     @Enumerated(EnumType.STRING)
-
     private UserRole role;
 
     public UserRole getRole() {
@@ -84,9 +83,14 @@ public class User {
         this.updatedDate = newupdatedDate;
     }
 
+    public User(String username, String password) {
+        this.username = username;
+        this.password = password;
+        this.role=UserRole.ROLE_USER;
+        }
     public User() {
+    
     }
-
     public User(Integer id, String username, String password, UserRole role, LocalDate creationDate, LocalDate updatedDate) {
         setId(id);
         setUsername(username);
@@ -96,10 +100,8 @@ public class User {
         setUpdatedDate(updatedDate);
     }
 
-    public User(String username, String password) {
-        this.username = username;
-        this.password = password;
-    }
+
+
 
     @Override
     public boolean equals(Object o) {
