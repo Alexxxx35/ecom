@@ -34,7 +34,7 @@ public class User {
     }
 
 
-    @Column(name = "password", nullable = false)
+    @Column(nullable = false)
     @Size(max = 255)
     private String password;
 
