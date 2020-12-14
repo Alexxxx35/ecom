@@ -2,14 +2,13 @@ package com.quest.etna.model;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.sql.Date;
-import java.sql.Timestamp;
-import java.time.LocalDate;
-import java.util.Objects;
 
+import java.util.Objects;
 @Entity
 public class User {
     @Id()
@@ -51,7 +50,7 @@ public class User {
         this.password = newPassword;
     }
 
-    private enum UserRole {
+    public enum UserRole {
         ROLE_USER, ROLE_ADMIN
     }
 

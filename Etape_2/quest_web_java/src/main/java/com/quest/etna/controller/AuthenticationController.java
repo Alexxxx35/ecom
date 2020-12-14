@@ -3,11 +3,13 @@ package com.quest.etna.controller;
 import com.quest.etna.model.User;
 import com.quest.etna.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.sql.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,17 +29,25 @@ public class AuthenticationController {
 
     @PostMapping(value ="/register" , consumes = "application/json", produces = "application/json")
     public ResponseEntity<Object> createUser(@RequestBody User user) {
-        User user2 = new User(user.getUsername(),user.getPassword());
-        List<User> duplicates = findByUsername(user2.getUsername());
-        if(!duplicates.isEmpty()){
-            return new ResponseEntity<>("{\"Error 409 CONFLICT\": \"username already used\"}", HttpStatus.CONFLICT);
+        Date sqlDate=new Date(new java.util.Date().getTime());
+        try{
+            boolean duplicata = userRepository.existsByUsername(user.getUsername());
+            if (duplicata) {
+                throw new DuplicateKeyException("duplicata");
+            }
+        }catch(DuplicateKeyException e)
+        //User user2 = new User(user.getUsername(),user.getPassword());
+        //List<User> duplicates = findByUsername(user2.getUsername());
+        //if(!duplicates.isEmpty()){
+        {return new ResponseEntity<>("{\"Error 409 CONFLICT\": \"username already used\"}", HttpStatus.CONFLICT);
         }
         try {
-            userRepository.save(user2);
+            user.setRole(User.UserRole.ROLE_USER);
+            userRepository.save(user);
         } catch (Exception e) {
             return new ResponseEntity<>("{\"Error 400\":\""+e.getMessage()+"\"}", HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(user2, HttpStatus.CREATED);
+        return new ResponseEntity<>(user, HttpStatus.CREATED);
 
 
     }
@@ -50,7 +60,7 @@ public class AuthenticationController {
 
 
     @GetMapping(value = "/user/{username}")
-    public List<User> findByUsername(@PathVariable String username) {
+    public User findByUsername(@PathVariable String username) {
         return userRepository.findByUsername(username);
     }
 
