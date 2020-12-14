@@ -43,6 +43,8 @@ public class AuthenticationController {
         }
         try {
             user.setRole(User.UserRole.ROLE_USER);
+            user.setCreationDate(sqlDate);
+            user.setUpdatedDate(sqlDate);
             userRepository.save(user);
         } catch (Exception e) {
             return new ResponseEntity<>("{\"Error 400\":\""+e.getMessage()+"\"}", HttpStatus.BAD_REQUEST);
