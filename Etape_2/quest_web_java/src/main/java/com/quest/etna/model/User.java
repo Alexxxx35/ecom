@@ -1,7 +1,12 @@
 package com.quest.etna.model;
 
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import javax.persistence.*;
 import javax.validation.constraints.Size;
+import java.sql.Date;
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.Objects;
 
@@ -61,25 +66,27 @@ public class User {
         this.role = newRole;
     }
 
+    @CreationTimestamp
     @Column()
-    private LocalDate creationDate;
+    private Date creationDate;
 
-    public LocalDate getCreationDate() {
+    public Date getCreationDate() {
         return this.creationDate;
     }
 
-    public void setCreationDate(LocalDate newcreationDate) {
+    public void setCreationDate(Date newcreationDate) {
         this.creationDate = newcreationDate;
     }
 
+    @UpdateTimestamp
     @Column()
-    private LocalDate updatedDate;
+    private Date updatedDate;
 
-    public LocalDate getUpdatedDate() {
+    public Date getUpdatedDate() {
         return this.updatedDate;
     }
 
-    public void setUpdatedDate(LocalDate newupdatedDate) {
+    public void setUpdatedDate(Date newupdatedDate) {
         this.updatedDate = newupdatedDate;
     }
 
@@ -88,10 +95,11 @@ public class User {
         this.password = password;
         this.role=UserRole.ROLE_USER;
         }
+
     public User() {
-    
+
     }
-    public User(Integer id, String username, String password, UserRole role, LocalDate creationDate, LocalDate updatedDate) {
+    public User(Integer id, String username, String password, UserRole role, Date creationDate, Date updatedDate) {
         setId(id);
         setUsername(username);
         setPassword(password);

@@ -30,12 +30,12 @@ public class AuthenticationController {
         User user2 = new User(user.getUsername(),user.getPassword());
         List<User> duplicates = findByUsername(user2.getUsername());
         if(!duplicates.isEmpty()){
-            return new ResponseEntity<>("{\"Erreur 409 CONFLIT\": \"Nom d'utilisateur déjà utilisé\"}", HttpStatus.CONFLICT);
+            return new ResponseEntity<>("{\"Error 409 CONFLICT\": \"username already used\"}", HttpStatus.CONFLICT);
         }
         try {
             userRepository.save(user2);
         } catch (Exception e) {
-            return new ResponseEntity<>("{\"Erreur 400\":\""+e.getMessage()+"\"}", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("{\"Error 400\":\""+e.getMessage()+"\"}", HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>(user2, HttpStatus.CREATED);
 
