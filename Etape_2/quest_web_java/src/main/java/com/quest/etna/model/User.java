@@ -7,8 +7,10 @@ import org.springframework.format.annotation.DateTimeFormat;
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.sql.Date;
-
 import java.util.Objects;
+import java.time.LocalDateTime;
+
+
 @Entity
 public class User {
     @Id()
@@ -64,28 +66,27 @@ public class User {
     public void setRole(UserRole newRole) {
         this.role = newRole;
     }
-
-    @CreationTimestamp
+    
+    
     @Column()
-    private Date creationDate;
+    private LocalDateTime creationDate;
 
-    public Date getCreationDate() {
+    public LocalDateTime getCreationDate() {
         return this.creationDate;
     }
 
-    public void setCreationDate(Date newcreationDate) {
+    public void setCreationDate(LocalDateTime newcreationDate) {
         this.creationDate = newcreationDate;
     }
 
-    @UpdateTimestamp
     @Column()
-    private Date updatedDate;
+    private LocalDateTime updatedDate;
 
-    public Date getUpdatedDate() {
+    public LocalDateTime getUpdatedDate() {
         return this.updatedDate;
     }
 
-    public void setUpdatedDate(Date newupdatedDate) {
+    public void setUpdatedDate(LocalDateTime newupdatedDate) {
         this.updatedDate = newupdatedDate;
     }
 
@@ -98,7 +99,7 @@ public class User {
     public User() {
 
     }
-    public User(Integer id, String username, String password, UserRole role, Date creationDate, Date updatedDate) {
+    public User(Integer id, String username, String password, UserRole role, LocalDateTime creationDate, LocalDateTime updatedDate) {
         setId(id);
         setUsername(username);
         setPassword(password);

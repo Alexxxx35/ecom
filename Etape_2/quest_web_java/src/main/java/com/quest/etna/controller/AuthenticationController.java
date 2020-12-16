@@ -9,7 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.sql.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,7 +30,8 @@ public class AuthenticationController {
 
     @PostMapping(value ="/register" , consumes = "application/json", produces = "application/json")
     public ResponseEntity<Object> createUser(@RequestBody User user) {
-        Date sqlDate=new Date(new java.util.Date().getTime());
+        //Date sqlDate=new Date(new java.util.Date().getTime());
+        LocalDateTime creationDatetime = LocalDateTime.now();
         try{
             boolean duplicata = userRepository.existsByUsername(user.getUsername());
             if (duplicata) {
@@ -43,8 +45,8 @@ public class AuthenticationController {
         }
         try {
             user.setRole(User.UserRole.ROLE_USER);
-            user.setCreationDate(sqlDate);
-            user.setUpdatedDate(sqlDate);
+            user.setCreationDate(creationDatetime);
+            user.setUpdatedDate(creationDatetime);
             userRepository.save(user);
         } catch (Exception e) {
             return new ResponseEntity<>("{\"Error 400\":\""+e.getMessage()+"\"}", HttpStatus.BAD_REQUEST);
