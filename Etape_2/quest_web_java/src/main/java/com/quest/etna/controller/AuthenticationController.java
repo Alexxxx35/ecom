@@ -20,14 +20,32 @@ public class AuthenticationController {
     @Autowired
     private UserRepository userRepository;
 
-    /*@PostMapping(value ="/register")
-    public User getUsernameandPassword() {
-        User user = new User("username", "password");
-        userRepository.save(user);
-        return user;
-    }*/
 
+    @PostMapping(value = "/register", consumes = "application/json", produces = "application/json")
+    public ResponseEntity<Object> createUser(@RequestBody User user) {
+        //Date sqlDate=new Date(new java.util.Date().getTime());
+        try {
+            boolean duplicata = userRepository.existsByUsername(user.getUsername());
+            if (duplicata) {
+                throw new DuplicateKeyException("duplicata");
+            }
+            user.setRole(User.UserRole.ROLE_USER);
+            LocalDateTime creationDatetime = LocalDateTime.now();
+            user.setCreationDate(creationDatetime);
+            user.setUpdatedDate(creationDatetime);
+            userRepository.save(user);
+            return new ResponseEntity<>(user.userDetails(), HttpStatus.CREATED);
 
+        } catch (DuplicateKeyException e) {
+            return new ResponseEntity<>("{\"Error 409 CONFLICT\": \"username already used\"}", HttpStatus.CONFLICT);
+        } catch (Exception e) {
+            return new ResponseEntity<>("{\"Error 400\":\""+e.getMessage()+"\"}", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    
+
+    /*
     @PostMapping(value ="/register" , consumes = "application/json", produces = "application/json")
     public ResponseEntity<Object> createUser(@RequestBody User user) {
         //Date sqlDate=new Date(new java.util.Date().getTime());
@@ -51,10 +69,10 @@ public class AuthenticationController {
         } catch (Exception e) {
             return new ResponseEntity<>("{\"Error 400\":\""+e.getMessage()+"\"}", HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(user, HttpStatus.CREATED);
+        return new ResponseEntity<>(, HttpStatus.CREATED);
 
 
-    }
+    }*/
 
 
     @GetMapping(value = "/user/{id}")

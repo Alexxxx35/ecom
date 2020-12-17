@@ -15,10 +15,10 @@ import java.time.LocalDateTime;
 public class User {
     @Id()
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
+    private int id;
 
 
-    public Integer getId() {
+    public int getId() {
         return this.id;
     }
 
@@ -68,7 +68,7 @@ public class User {
     }
     
     
-    @Column()
+    @Column(columnDefinition = "Datetime")
     private LocalDateTime creationDate;
 
     public LocalDateTime getCreationDate() {
@@ -79,7 +79,7 @@ public class User {
         this.creationDate = newcreationDate;
     }
 
-    @Column()
+    @Column(columnDefinition = "Datetime")
     private LocalDateTime updatedDate;
 
     public LocalDateTime getUpdatedDate() {
@@ -116,7 +116,7 @@ public class User {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return getId().equals(user.getId()) &&
+        return getId()==user.getId() &&
                 getUsername().equals(user.getUsername()) &&
                 getPassword().equals(user.getPassword()) &&
                 getRole() == user.getRole() &&
@@ -141,4 +141,11 @@ public class User {
                 ", updatedDate=" + updatedDate +
                 '}';
     }
+
+    public String userDetails(){
+        return "{\"username\":\""+this.getUsername()+"\",\"role\":\""+this.getRole()+"\"}";
+    }
+
+
+
 }
