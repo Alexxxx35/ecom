@@ -25,6 +25,12 @@ public class AuthenticationController {
     public ResponseEntity<Object> createUser(@RequestBody User user) {
         //Date sqlDate=new Date(new java.util.Date().getTime());
         try {
+            if (user.getPassword() == null){
+                throw new Exception("pas de mot de passe");
+            }
+            if (user.getUsername() == null){
+                throw new Exception("pas d'username");
+            }
             boolean duplicata = userRepository.existsByUsername(user.getUsername());
             if (duplicata) {
                 throw new DuplicateKeyException("duplicata");
