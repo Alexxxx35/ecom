@@ -1,5 +1,6 @@
 package com.quest.etna.controller;
 
+import com.quest.etna.model.JwtUserDetails;
 import com.quest.etna.model.User;
 import com.quest.etna.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +17,23 @@ public class AuthenticationController {
 
     @Autowired
     private UserRepository userRepository;
-
-    //@PostMapping(value="/authenticate", consumes = "application/json", produces = "application/json")
+/*
+    @PostMapping(value="/authenticate", consumes = "application/json", produces = "application/json")
+    public ResponseEntity<Object> authenticate (@RequestBody JwtUserDetails jwtUserDetails) {
+    try{
+        if (jwtUserDetails.getPassword()==null){
+            throw new Exception("no password");
+        }
+        if (jwtUserDetails.getUsername()==null){
+            throw new Exception("no username");
+        }
+    }
+    catch (Exception e) {
+        return new ResponseEntity<>("{\"Error 400\":\"" + e.getMessage() + "\"}", HttpStatus.BAD_REQUEST);
+    }
+    return something;
+    }
+*/
 
     @PostMapping(value = "/register", consumes = "application/json", produces = "application/json")
     public ResponseEntity<Object> createUser(@RequestBody User user) {

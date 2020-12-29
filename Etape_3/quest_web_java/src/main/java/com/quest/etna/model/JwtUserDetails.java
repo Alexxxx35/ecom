@@ -11,10 +11,9 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class JwtUserDetails implements UserDetails {
-    private User user;
 
     public JwtUserDetails(User user) {
-        this.user = user;
+
     }
 
     @Override
