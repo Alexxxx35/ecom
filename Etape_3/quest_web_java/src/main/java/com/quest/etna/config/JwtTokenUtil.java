@@ -17,7 +17,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 public class JwtTokenUtil implements Serializable {
     private static final long serialVersionUID = -9077248927410675523L;
     public static final long JWT_TOKEN_VALIDITY = 5 * 360;
-    private String secret = "etna_quest"; // retrieve username from jwt token
+    private final String secret = "etna_quest"; // retrieve username from jwt token
 
     public String getUsernameFromToken(String token) {
         return getClaimFromToken(token, Claims::getSubject);
@@ -28,7 +28,7 @@ public class JwtTokenUtil implements Serializable {
         return getClaimFromToken(token, Claims::getExpiration);
     }
 
-    public T getClaimFromToken(String token, Function claimsResolver) {
+    public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = getAllClaimsFromToken(token);
         return claimsResolver.apply(claims);
     }
