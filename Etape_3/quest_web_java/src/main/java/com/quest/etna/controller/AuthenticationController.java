@@ -1,5 +1,7 @@
 package com.quest.etna.controller;
 
+import com.quest.etna.config.JwtTokenUtil;
+import com.quest.etna.config.JwtUserDetailsService;
 import com.quest.etna.model.JwtUserDetails;
 import com.quest.etna.model.User;
 import com.quest.etna.repositories.UserRepository;
@@ -7,33 +9,39 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 @RestController
 public class AuthenticationController {
 
     @Autowired
     private UserRepository userRepository;
-/*
-    @PostMapping(value="/authenticate", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<Object> authenticate (@RequestBody JwtUserDetails jwtUserDetails) {
-    try{
-        if (jwtUserDetails.getPassword()==null){
-            throw new Exception("no password");
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private JwtUserDetailsService jwtUserDetailsService;
+
+    @PostMapping(value = "/authenticate", consumes = "application/json", produces = "application/json")
+    public JwtTokenUtil authenticate(@RequestBody JwtUserDetails jwtUserDetails) throws Exception {
+        try {
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+                    jwtUserDetails.getUsername(),
+                    jwtUserDetails.getPassword())
+            );
+        } catch (BadCredentialsException e) {
+            throw new Exception("Invalid credentials", e);
         }
-        if (jwtUserDetails.getUsername()==null){
-            throw new Exception("no username");
-        }
+        final UserDetails userDetails = jwtUserDetailsService.loadUserByUsername(jwtUserDetails.getUsername());
+    return new JwtTokenUtil();
     }
-    catch (Exception e) {
-        return new ResponseEntity<>("{\"Error 400\":\"" + e.getMessage() + "\"}", HttpStatus.BAD_REQUEST);
-    }
-    return something;
-    }
-*/
 
     @PostMapping(value = "/register", consumes = "application/json", produces = "application/json")
     public ResponseEntity<Object> createUser(@RequestBody User user) {
