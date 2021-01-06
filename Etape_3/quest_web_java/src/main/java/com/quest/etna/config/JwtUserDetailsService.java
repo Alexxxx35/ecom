@@ -36,7 +36,7 @@ public class JwtUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         if ("quest.etna".equals(username)) {
-            return new User("quest.etna", "password",
+            return new User("application", "password",
                     new ArrayList<>());
 
         } else {
