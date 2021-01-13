@@ -12,8 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.time.LocalDateTime;
 
@@ -26,8 +26,6 @@ public class AuthenticationController {
     @Autowired
     private AuthenticationManager authenticationManager;
 
-    @Autowired
-    private JwtUserDetailsService jwtUserDetailsService;
 
     @PostMapping(value = "/authenticate", consumes = "application/json", produces = "application/json")
     public String authenticate(@RequestBody User user )throws Exception {
@@ -60,6 +58,11 @@ public class AuthenticationController {
             LocalDateTime creationDatetime = LocalDateTime.now();
             user.setCreationDate(creationDatetime);
             user.setUpdatedDate(creationDatetime);
+
+            String pass = user.getPassword();
+            BCryptPasswordEncoder bEncoder= new BCryptPasswordEncoder();
+            pass = bEncoder.encode(pass);
+            user.setPassword(pass);
             userRepository.save(user);
             return new ResponseEntity<>(user.userDetails(), HttpStatus.CREATED);
 

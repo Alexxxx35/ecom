@@ -6,15 +6,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Set;
-import javax.persistence.Entity;
 
 
-
-@Entity
 public class JwtUserDetails implements UserDetails {
-
-    static final long  serialVersionUID = -9077248927410675523L;
-
+    private static final long serialVersionUID = -907L;
+    
     User user;
     private Set<GrantedAuthority> authorities;
 
