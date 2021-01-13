@@ -17,6 +17,9 @@ import java.io.IOException;
 
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
+
+    public static final String TOKEN_PREFIX = "Bearer ";
+    public static final String HEADER_STRING = "Authorization";
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
 
@@ -25,17 +28,16 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
-        String authorization = httpServletRequest.getHeader("Authorization");
+        String authorization = httpServletRequest.getHeader(HEADER_STRING);
         String token = null;
         String userName = null;
-        if (null != authorization && authorization.startsWith("Bearer")) {
-            token = authorization.substring(10);
+        if (authorization != null && authorization.startsWith(TOKEN_PREFIX)) {
+            token = authorization.substring(7); // to remove Bearer\s
             userName = jwtTokenUtil.getUsernameFromToken(token);
         }
         if (null != userName && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails
-                    = jwtUserDetailsService.loadUserByUsername(userName);
-            if (jwtTokenUtil.validateToken(token, (JwtUserDetails) userDetails)) {
+            JwtUserDetails userDetails = jwtUserDetailsService.loadUserByUsername(userName);
+            if (jwtTokenUtil.validateToken(token, userDetails)) {
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken
                         = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 usernamePasswordAuthenticationToken.setDetails(
@@ -46,4 +48,5 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             filterChain.doFilter((httpServletRequest), httpServletResponse);
         }
     }
+
 }

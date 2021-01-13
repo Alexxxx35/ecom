@@ -1,15 +1,7 @@
 package com.quest.etna.model;
 
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
 import javax.persistence.*;
 import javax.validation.constraints.Size;
-import java.sql.Date;
-import java.util.Collection;
 import java.util.Objects;
 import java.time.LocalDateTime;
 
@@ -67,6 +59,11 @@ public class User {
 
     public UserRole getRole() {
         return this.role;
+    }
+
+    public String getRoleString(){
+        if (this.role == UserRole.ROLE_ADMIN) return "admin";
+        else return "user";
     }
 
     public void setRole(UserRole newRole) {

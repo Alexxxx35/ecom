@@ -30,7 +30,8 @@ public class AuthenticationController {
     private JwtUserDetailsService jwtUserDetailsService;
 
     @PostMapping(value = "/authenticate", consumes = "application/json", produces = "application/json")
-    public JwtTokenUtil authenticate(@RequestBody JwtUserDetails jwtUserDetails) throws Exception {
+    public String authenticate(@RequestBody User user )throws Exception {
+        JwtUserDetails jwtUserDetails = new JwtUserDetailsService(userRepository).loadUserByUsername(user.getUsername());
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                     jwtUserDetails.getUsername(),
@@ -39,8 +40,7 @@ public class AuthenticationController {
         } catch (BadCredentialsException e) {
             throw new Exception("Invalid credentials", e);
         }
-        final UserDetails userDetails = jwtUserDetailsService.loadUserByUsername(jwtUserDetails.getUsername());
-    return new JwtTokenUtil();
+    return new JwtTokenUtil().generateToken(jwtUserDetails);
     }
 
     @PostMapping(value = "/register", consumes = "application/json", produces = "application/json")
