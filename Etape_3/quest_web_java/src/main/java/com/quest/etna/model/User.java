@@ -62,8 +62,8 @@ public class User {
     }
 
     public String getRoleString(){
-        if (this.role == UserRole.ROLE_ADMIN) return "admin";
-        else return "user";
+        if (this.role == UserRole.ROLE_ADMIN) return "ADMIN";
+        else return "USER";
     }
 
     public void setRole(UserRole newRole) {

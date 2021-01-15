@@ -14,6 +14,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.time.LocalDateTime;
 
@@ -21,24 +22,34 @@ import java.time.LocalDateTime;
 public class AuthenticationController {
 
     @Autowired
+    private JwtTokenUtil jwtTokenUtil;
+
+    @Autowired
     private UserRepository userRepository;
 
     @Autowired
     private AuthenticationManager authenticationManager;
 
+    @Autowired
+    private JwtUserDetailsService userService;
 
-    @PostMapping(value = "/authenticate", consumes = "application/json", produces = "application/json")
-    public String authenticate(@RequestBody User user )throws Exception {
-        JwtUserDetails jwtUserDetails = new JwtUserDetailsService(userRepository).loadUserByUsername(user.getUsername());
+
+    @PostMapping(value = "/authenticate")
+    public ResponseEntity<Object> authenticate(@RequestBody User user )throws Exception {
         try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                    jwtUserDetails.getUsername(),
-                    jwtUserDetails.getPassword())
-            );
-        } catch (BadCredentialsException e) {
+            authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword())
+        );   
+        } 
+        catch (BadCredentialsException e) {
             throw new Exception("Invalid credentials", e);
         }
-    return new JwtTokenUtil().generateToken(jwtUserDetails);
+        final JwtUserDetails jwtUserDetails = userService.loadUserByUsername(user.getUsername());
+        final String token= jwtTokenUtil.generateToken(jwtUserDetails);
+        return new ResponseEntity<>("{\"jwtToken\": \""+ token +"\"}",HttpStatus.OK);
+        
+        
+
     }
 
     @PostMapping(value = "/register", consumes = "application/json", produces = "application/json")
@@ -72,23 +83,22 @@ public class AuthenticationController {
             return new ResponseEntity<>("{\"Error 400\":\"" + e.getMessage() + "\"}", HttpStatus.BAD_REQUEST);
         }
     }
+
+    @GetMapping(value = "/me")
+    public ResponseEntity<Object> me() {
+        try {
+            JwtUserDetails userDetails = (JwtUserDetails) SecurityContextHolder.getContext()
+                    .getAuthentication().getPrincipal();
+            String userName = userDetails.getUsername();
+            User user = userRepository.findByUsername(userName);
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(user);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(new Error("Error"));
+        }
+    }
 }
-/*
-    @GetMapping(value = "/user/{id}")
-    public Optional<User> findById(@PathVariable Integer id) {
-        return userRepository.findById(id);
-    }
-
-
-    @GetMapping(value = "/user/{username}")
-    public User findByUsername(@PathVariable String username) {
-        return userRepository.findByUsername(username);
-    }
-
-
-    @GetMapping(value = "/users")
-    public Iterable<User> findAllByUsername() {
-        return userRepository.findAll();
-    }
-}
-*/
