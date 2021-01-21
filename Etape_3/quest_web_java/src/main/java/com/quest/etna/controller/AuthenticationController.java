@@ -1,5 +1,6 @@
 package com.quest.etna.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.quest.etna.config.JwtTokenUtil;
 import com.quest.etna.config.JwtUserDetailsService;
 import com.quest.etna.model.JwtUserDetails;
@@ -14,9 +15,11 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 
 @RestController
 public class AuthenticationController {
@@ -33,8 +36,11 @@ public class AuthenticationController {
     @Autowired
     private JwtUserDetailsService userService;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
-    @PostMapping(value = "/authenticate")
+
+    @PostMapping(value = "/authenticate" , consumes = "application/json", produces = "application/json")
     public ResponseEntity<Object> authenticate(@RequestBody User user )throws Exception {
         try {
             authenticationManager.authenticate(
@@ -44,9 +50,16 @@ public class AuthenticationController {
         catch (BadCredentialsException e) {
             throw new Exception("Invalid credentials", e);
         }
+
+
         final JwtUserDetails jwtUserDetails = userService.loadUserByUsername(user.getUsername());
         final String token= jwtTokenUtil.generateToken(jwtUserDetails);
-        return new ResponseEntity<>("{\"jwtToken\": \""+ token +"\"}",HttpStatus.OK);
+        ObjectMapper mapper = new ObjectMapper();
+        HashMap<String,String> hash = new HashMap<String,String>();
+        hash.put("token", token);
+        String json = mapper.writeValueAsString(hash);
+        return ResponseEntity.status(HttpStatus.OK).body(json);
+        
         
         
 
@@ -71,8 +84,9 @@ public class AuthenticationController {
             user.setUpdatedDate(creationDatetime);
 
             String pass = user.getPassword();
-            BCryptPasswordEncoder bEncoder= new BCryptPasswordEncoder();
-            pass = bEncoder.encode(pass);
+            //BCryptPasswordEncoder bEncoder= new BCryptPasswordEncoder();
+            //pass = bEncoder.encode(pass);
+            pass = passwordEncoder.encode(pass);
             user.setPassword(pass);
             userRepository.save(user);
             return new ResponseEntity<>(user.userDetails(), HttpStatus.CREATED);
@@ -84,7 +98,7 @@ public class AuthenticationController {
         }
     }
 
-    @GetMapping(value = "/me")
+    @GetMapping(value = "/me", produces = "application/json")
     public ResponseEntity<Object> me() {
         try {
             JwtUserDetails userDetails = (JwtUserDetails) SecurityContextHolder.getContext()
@@ -92,8 +106,8 @@ public class AuthenticationController {
             String userName = userDetails.getUsername();
             User user = userRepository.findByUsername(userName);
             return ResponseEntity
-                    .status(HttpStatus.OK)
-                    .body(user);
+            .status(HttpStatus.OK)
+            .body(user.userDetails());
         } catch (Exception ex) {
             ex.printStackTrace();
             return ResponseEntity
