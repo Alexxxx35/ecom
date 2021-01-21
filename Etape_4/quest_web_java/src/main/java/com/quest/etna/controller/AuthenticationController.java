@@ -1,5 +1,6 @@
 package com.quest.etna.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.quest.etna.config.JwtTokenUtil;
 import com.quest.etna.config.JwtUserDetailsService;
 import com.quest.etna.model.JwtUserDetails;
@@ -14,11 +15,17 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 
 @RestController
 public class AuthenticationController {
+
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
 
     @Autowired
     private UserRepository userRepository;
@@ -26,19 +33,36 @@ public class AuthenticationController {
     @Autowired
     private AuthenticationManager authenticationManager;
 
+    @Autowired
+    private JwtUserDetailsService userService;
 
-    @PostMapping(value = "/authenticate", consumes = "application/json", produces = "application/json")
-    public String authenticate(@RequestBody User user )throws Exception {
-        JwtUserDetails jwtUserDetails = new JwtUserDetailsService(userRepository).loadUserByUsername(user.getUsername());
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+
+    @PostMapping(value = "/authenticate" , consumes = "application/json", produces = "application/json")
+    public ResponseEntity<Object> authenticate(@RequestBody User user )throws Exception {
         try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                    jwtUserDetails.getUsername(),
-                    jwtUserDetails.getPassword())
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword())
             );
-        } catch (BadCredentialsException e) {
+        }
+        catch (BadCredentialsException e) {
             throw new Exception("Invalid credentials", e);
         }
-    return new JwtTokenUtil().generateToken(jwtUserDetails);
+
+
+        final JwtUserDetails jwtUserDetails = userService.loadUserByUsername(user.getUsername());
+        final String token= jwtTokenUtil.generateToken(jwtUserDetails);
+        ObjectMapper mapper = new ObjectMapper();
+        HashMap<String,String> hash = new HashMap<String,String>();
+        hash.put("token", token);
+        String json = mapper.writeValueAsString(hash);
+        return ResponseEntity.status(HttpStatus.OK).body(json);
+
+
+
+
     }
 
     @PostMapping(value = "/register", consumes = "application/json", produces = "application/json")
@@ -60,8 +84,9 @@ public class AuthenticationController {
             user.setUpdatedDate(creationDatetime);
 
             String pass = user.getPassword();
-            BCryptPasswordEncoder bEncoder= new BCryptPasswordEncoder();
-            pass = bEncoder.encode(pass);
+            //BCryptPasswordEncoder bEncoder= new BCryptPasswordEncoder();
+            //pass = bEncoder.encode(pass);
+            pass = passwordEncoder.encode(pass);
             user.setPassword(pass);
             userRepository.save(user);
             return new ResponseEntity<>(user.userDetails(), HttpStatus.CREATED);
@@ -72,23 +97,22 @@ public class AuthenticationController {
             return new ResponseEntity<>("{\"Error 400\":\"" + e.getMessage() + "\"}", HttpStatus.BAD_REQUEST);
         }
     }
+
+    @GetMapping(value = "/me", produces = "application/json")
+    public ResponseEntity<Object> me() {
+        try {
+            JwtUserDetails userDetails = (JwtUserDetails) SecurityContextHolder.getContext()
+                    .getAuthentication().getPrincipal();
+            String userName = userDetails.getUsername();
+            User user = userRepository.findByUsername(userName);
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(user.userDetails());
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(new Error("Error"));
+        }
+    }
 }
-/*
-    @GetMapping(value = "/user/{id}")
-    public Optional<User> findById(@PathVariable Integer id) {
-        return userRepository.findById(id);
-    }
-
-
-    @GetMapping(value = "/user/{username}")
-    public User findByUsername(@PathVariable String username) {
-        return userRepository.findByUsername(username);
-    }
-
-
-    @GetMapping(value = "/users")
-    public Iterable<User> findAllByUsername() {
-        return userRepository.findAll();
-    }
-}
-*/

@@ -1,27 +1,24 @@
 package com.quest.etna.model;
 
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
-import java.util.Set;
+import java.util.ArrayList;
 
 
 public class JwtUserDetails implements UserDetails {
     private static final long serialVersionUID = -907L;
-    
-    User user;
-    private Set<GrantedAuthority> authorities;
+
+    private final User user;
 
     public JwtUserDetails(User user) {
         this.user=user;
-        authorities.add(new SimpleGrantedAuthority(user.getRoleString()));
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return authorities;
+        return new ArrayList<>();
     }
 
     @Override
