@@ -1,5 +1,8 @@
 package com.quest.etna.model;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.util.List;
@@ -7,8 +10,7 @@ import java.util.Objects;
 import java.time.LocalDateTime;
 
 
-@Entity
-@Table(name="User")
+@Entity(name="user")
 public class User {
     @Id()
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -22,7 +24,10 @@ public class User {
         this.id = newID;
     }
 
-    @OneToMany(mappedBy = "User", fetch = FetchType.LAZY)
+    //@OneToMany(mappedBy = "user")
+    //@Fetch(FetchMode.JOIN)
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Address> addresses;
 
     public List<Address> getAddresses() {
@@ -31,6 +36,7 @@ public class User {
 
     public void setAddresses(List<Address> addresses) {
         this.addresses = addresses;
+        addresses.forEach(s ->s.setUser(this));
     }
 
     @Column(nullable = false, unique = true)

@@ -27,7 +27,7 @@ public class AddressController {
         return addressRepository.findAll();
     }
 
-    @PostMapping(value = "/address", consumes = "application/json", produces = "application/json")
+    @PostMapping(value = "/address",produces = "application/json")
     public ResponseEntity<Object> createAddress(@RequestBody Address address) {
         try {
             if (address.getRoad() == null || address.getCity() == null || address.getCountry() == null || address.getPostalCode() == null) {
@@ -66,20 +66,12 @@ public class AddressController {
 
     @DeleteMapping(value = "/address/{id}")
     public ResponseEntity<Integer> deleteAddress(@PathVariable Integer id) {
-        addressRepository.delete(findById(id));
+        Optional<Address> address=addressRepository.findById(id);
+        boolean isRemoved=addressRepository.deleteById(address);
         if (!isRemoved) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
-    /*
-    @PutMapping(value = "/address/{id}", consumes = "application/json", produces = "application/json")
-    Optional<Address> replaceAddress(@RequestBody Address newAddress, @PathVariable Integer id) {
-        return addressRepository.findById(id);
-    }
-
-
-     */
-
 
 }

@@ -4,9 +4,7 @@ import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.Objects;
-
-@Entity
-@Table(name = "Address")
+@Entity(name = "address")
 public class Address {
     @Id()
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -20,14 +18,10 @@ public class Address {
     public void setId(Integer newID) {
         this.id = newID;
     }
-/*
-    @Size(max = 100)
-    @Column(nullable = false)
-    private Integer user_id;
-    */
+
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id")
     private User user;
 
     public User getUser() {
@@ -138,13 +132,14 @@ public class Address {
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getRoad(), getPostalCode(), getCity(), getCountry(), getCreationDate(), getUpdatedDate());
+        return Objects.hash(getId(),getUser(), getRoad(), getPostalCode(), getCity(), getCountry(), getCreationDate(), getUpdatedDate());
     }
 
     @Override
     public String toString() {
         return "Address{" +
                 "id=" + id +
+                ", user=" + user +
                 ", road=" + road +
                 ", postal_code=" + postalCode +
                 ", city=" + city +

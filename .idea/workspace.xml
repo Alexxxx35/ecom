@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="0c4b8b36-bb7e-4a59-9204-a7c3f194d8be" name="Default Changelist" comment="" />
+    <list default="true" id="0c4b8b36-bb7e-4a59-9204-a7c3f194d8be" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/Etape_4/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Etape_4/.idea/compiler.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Etape_4/quest_web_java/src/main/java/com/quest/etna/controller/AddressController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Etape_4/quest_web_java/src/main/java/com/quest/etna/controller/AddressController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Etape_4/quest_web_java/src/main/java/com/quest/etna/model/Address.java" beforeDir="false" afterPath="$PROJECT_DIR$/Etape_4/quest_web_java/src/main/java/com/quest/etna/model/Address.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Etape_4/quest_web_java/src/main/java/com/quest/etna/model/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/Etape_4/quest_web_java/src/main/java/com/quest/etna/model/User.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -20,7 +25,7 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/Etape_3" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/Etape_4" />
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -31,10 +36,17 @@
       <option name="presentableId" value="Default" />
       <updated>1609926844436</updated>
       <workItem from="1609926847272" duration="43000" />
+      <workItem from="1611311345421" duration="11000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="779" y="311" width="424" height="491" key="FileChooserDialogImpl" timestamp="1611311354851">
+      <screen x="72" y="27" width="1848" height="1053" />
+    </state>
+    <state x="779" y="311" width="424" height="491" key="FileChooserDialogImpl/72.27.1848.1053@72.27.1848.1053" timestamp="1611311354851" />
   </component>
 </project>

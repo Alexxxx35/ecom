@@ -15,4 +15,5 @@ public interface AddressRepository extends CrudRepository<Address, Integer> {
     boolean existsByCity(String city);
 
 
+    boolean deleteById(Optional<Address> address);
 }
