@@ -33,18 +33,21 @@ public class AddressController {
             if (address.getRoad() == null || address.getCity() == null || address.getCountry() == null || address.getPostalCode() == null) {
                 throw new Exception("No valid data");
             }
-            boolean duplicate = addressRepository.existsByCity(address.getCity());
+            /*boolean duplicate = addressRepository.existsByCity(address.getCity());
             if (duplicate) {
                 throw new DuplicateKeyException("Duplicate");
             }
+            */
             LocalDateTime creationDatetime = LocalDateTime.now();
             address.setCreationDate(creationDatetime);
             address.setUpdatedDate(creationDatetime);
+            //address.setUser(address.getUser());
             addressRepository.save(address);
             return new ResponseEntity<>(address, HttpStatus.CREATED);
-        } catch (DuplicateKeyException e) {
+        }/* catch (DuplicateKeyException e) {
             return new ResponseEntity<>("{\"Error 409 CONFLICT\": \"address already used\"}", HttpStatus.CONFLICT);
-        } catch (Exception e) {
+        }*/
+        catch (Exception e) {
             return new ResponseEntity<>("{\"Error 400\":\"" + e.getMessage() + "\"}", HttpStatus.BAD_REQUEST);
         }
     }

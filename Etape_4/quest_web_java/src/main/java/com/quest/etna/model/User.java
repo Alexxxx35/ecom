@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Entity(name="user")
 public class User {
     @Id()
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     public int getId() {
@@ -27,7 +27,7 @@ public class User {
     //@OneToMany(mappedBy = "user")
     //@Fetch(FetchMode.JOIN)
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user",fetch=FetchType.EAGER)
     private List<Address> addresses;
 
     public List<Address> getAddresses() {

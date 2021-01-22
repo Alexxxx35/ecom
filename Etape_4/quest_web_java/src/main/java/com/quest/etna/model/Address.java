@@ -7,7 +7,7 @@ import java.util.Objects;
 @Entity(name = "address")
 public class Address {
     @Id()
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(unique = true)
     private int id;
 
@@ -21,7 +21,7 @@ public class Address {
 
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(nullable=false, name = "user_id")
     private User user;
 
     public User getUser() {
