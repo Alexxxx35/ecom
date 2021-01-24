@@ -1,7 +1,5 @@
 package com.quest.etna.model;
 
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
@@ -54,8 +52,10 @@ public class User {
 
     @Column(nullable = false)
     @Size(max = 255)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
+    @JsonIgnore
     public String getPassword() {
         return this.password;
     }
@@ -77,11 +77,6 @@ public class User {
 
     public UserRole getRole() {
         return this.role;
-    }
-
-    public String getRoleString() {
-        if (this.role == UserRole.ROLE_ADMIN) return "admin";
-        else return "user";
     }
 
     public void setRole(UserRole newRole) {

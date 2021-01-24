@@ -5,6 +5,7 @@ import com.quest.etna.config.JwtTokenUtil;
 import com.quest.etna.config.JwtUserDetailsService;
 import com.quest.etna.model.JwtUserDetails;
 import com.quest.etna.model.User;
+import com.quest.etna.model.User.UserRole;
 import com.quest.etna.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -112,6 +113,39 @@ public class AuthenticationController {
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
                     .body(new Error("Error"));
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    //for testing
+    @PostMapping(value = "/register/admin", consumes = "application/json", produces = "application/json")
+    public ResponseEntity<Object> createUserAdmin() {
+        try {
+            User user = new User(20, "admin", "admin", UserRole.ROLE_ADMIN, LocalDateTime.now(), LocalDateTime.now());
+            String pass = user.getPassword();
+            //BCryptPasswordEncoder bEncoder= new BCryptPasswordEncoder();
+            //pass = bEncoder.encode(pass);
+            pass = passwordEncoder.encode(pass);
+            user.setPassword(pass);
+            userRepository.save(user);
+            return new ResponseEntity<>(user.userDetails(), HttpStatus.CREATED);
+
+        } catch (DuplicateKeyException e) {
+            return new ResponseEntity<>("{\"Error 409 CONFLICT\": \"username already used\"}", HttpStatus.CONFLICT);
+        } catch (Exception e) {
+            return new ResponseEntity<>("{\"Error 400\":\"" + e.getMessage() + "\"}", HttpStatus.BAD_REQUEST);
         }
     }
 }
