@@ -26,8 +26,8 @@ public class UserController {
         return userRepository.findAll();
     }
 
-    @PutMapping(value = "/user{id}", produces = "application/json")
+    /*@PutMapping(value = "/user{id}", produces = "application/json")
     public ResponseEntity<Object> createUser(@RequestBody User user) {
 
-    }
+    }*/
 }

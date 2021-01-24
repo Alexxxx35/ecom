@@ -8,9 +8,11 @@ import javax.validation.constraints.Size;
 import java.util.List;
 import java.util.Objects;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import com.fasterxml.jackson.annotation.*;
 
 
-@Entity(name="user")
+@Entity @Table(name="user")
 public class User {
     @Id()
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,15 +22,13 @@ public class User {
         return this.id;
     }
 
-    public void setId(Integer newID) {
+    public void setId(int newID) {
         this.id = newID;
     }
 
-    //@OneToMany(mappedBy = "user")
-    //@Fetch(FetchMode.JOIN)
-
-    @OneToMany(mappedBy = "user",fetch=FetchType.EAGER)
-    private List<Address> addresses;
+    @OneToMany(targetEntity = Address.class,mappedBy = "user")
+    @JsonManagedReference
+    private List<Address> addresses= new ArrayList<>();
 
     public List<Address> getAddresses() {
         return addresses;

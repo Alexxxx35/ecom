@@ -2,29 +2,55 @@ package com.quest.etna.controller;
 
 import com.quest.etna.model.Address;
 import com.quest.etna.repositories.AddressRepository;
+import com.quest.etna.config.JwtTokenUtil;
+import com.quest.etna.config.JwtUserDetailsService;
+import org.springframework.security.authentication.AuthenticationManager;
+import com.quest.etna.model.JwtUserDetails;
+import com.quest.etna.model.User;
+import com.quest.etna.model.User.UserRole;
+import com.quest.etna.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+
+import javax.validation.Valid;
 
 @RestController
 public class AddressController {
     @Autowired
     private AddressRepository addressRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @GetMapping(value = "/address/{id}")
-    public Optional<Address> findById(@PathVariable Integer id) {
-         return addressRepository.findById(id);
+    public ResponseEntity<Object> findById(@PathVariable int id) {
+        User user = getAuthenticatedUser(); 
+        if (user.getRole()== UserRole.ROLE_ADMIN){
+            return new ResponseEntity<> (addressRepository.findById(id),HttpStatus.OK);
+        } 
+        else{
+            return new ResponseEntity<> (addressRepository.findByIdAndUser_id(id,user.getId()),HttpStatus.OK);
+        }
     }
 
     @GetMapping(value = "/address/")
-    public List<Address> findAll() {
-        return addressRepository.findAll();
+    public ResponseEntity<Object> findAll() {
+        User user = getAuthenticatedUser();  
+        if (user.getRole()== UserRole.ROLE_ADMIN){
+            return new ResponseEntity<> (addressRepository.findAll(),HttpStatus.OK);
+        }
+        else{
+            return new ResponseEntity<> (addressRepository.findByUser_id(user.getId()),HttpStatus.OK); // return only addresses related to user
+        }
+        
     }
 
     @PostMapping(value = "/address",produces = "application/json")
@@ -33,48 +59,84 @@ public class AddressController {
             if (address.getRoad() == null || address.getCity() == null || address.getCountry() == null || address.getPostalCode() == null) {
                 throw new Exception("No valid data");
             }
-            /*boolean duplicate = addressRepository.existsByCity(address.getCity());
-            if (duplicate) {
-                throw new DuplicateKeyException("Duplicate");
-            }
-            */
+
             LocalDateTime creationDatetime = LocalDateTime.now();
             address.setCreationDate(creationDatetime);
             address.setUpdatedDate(creationDatetime);
-            //address.setUser(address.getUser());
+            User user = getAuthenticatedUser(); 
+            address.setUser(user);
             addressRepository.save(address);
-            return new ResponseEntity<>(address, HttpStatus.CREATED);
-        }/* catch (DuplicateKeyException e) {
-            return new ResponseEntity<>("{\"Error 409 CONFLICT\": \"address already used\"}", HttpStatus.CONFLICT);
-        }*/
+
+
+            return new ResponseEntity<>(address.addressDetails(), HttpStatus.CREATED);
+        }
         catch (Exception e) {
             return new ResponseEntity<>("{\"Error 400\":\"" + e.getMessage() + "\"}", HttpStatus.BAD_REQUEST);
         }
     }
 
     @PutMapping(value = "/address/{id}", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<Object> updateAddress(@RequestBody Address newAddress) {
-        try {
-            boolean duplicate = addressRepository.existsByCity(newAddress.getCity());
-            if (duplicate) {
-                addressRepository.save(newAddress);
-                return new ResponseEntity<>(newAddress, HttpStatus.NO_CONTENT);
+    public ResponseEntity<Object> updateAddress(@PathVariable int id,@RequestBody Address newAddress) {
+        boolean modified =false;
+        User user = getAuthenticatedUser(); 
+        if (user.getRole()==UserRole.ROLE_ADMIN){
+            if(newAddress.getCity() != null){
+                addressRepository.setAddressCityById(id, newAddress.getCity());
+                modified = true;
+            } 
+            if(newAddress.getCountry() != null) {
+                addressRepository.setAddressCountryById(id, newAddress.getCountry());
+                modified=true;
             }
-            addressRepository.save(newAddress);
-            return new ResponseEntity<>(newAddress, HttpStatus.CREATED);
-        } catch (Exception e) {
-            return new ResponseEntity<>("{\"Error 400\":\"" + e.getMessage() + "\"}", HttpStatus.BAD_REQUEST);
+            if(newAddress.getPostalCode() != null) {
+                addressRepository.setAddressPostalCodeById(id, newAddress.getPostalCode());
+                modified = true;
+            }
+            if(newAddress.getRoad() != null) {
+                addressRepository.setAddressRoadById(id, newAddress.getRoad());
+                modified = true;
+            }
         }
+        else{
+            if(newAddress.getCity() != null){
+                addressRepository.setAddressCityByIdAndUser_id(id,user.getId(), newAddress.getCity());
+                modified = true;
+            } 
+            if(newAddress.getCountry() != null) {
+                addressRepository.setAddressCountryByIdAndUser_id(id,user.getId(), newAddress.getCountry());
+                modified=true;
+            }
+            if(newAddress.getPostalCode() != null) {
+                addressRepository.setAddressPostalCodeByIdAndUser_id(id,user.getId(), newAddress.getPostalCode());
+                modified = true;
+            }
+            if(newAddress.getRoad() != null) {
+                addressRepository.setAddressRoadByIdAndUser_id(id,user.getId(), newAddress.getRoad());
+                modified = true;
+            }
+        }
+        if (modified) addressRepository.setAddressUpdatedDateById(id, LocalDateTime.now()); 
+
+        return new ResponseEntity<>(addressRepository.findById(id),HttpStatus.OK);
     }
 
     @DeleteMapping(value = "/address/{id}")
-    public ResponseEntity<Integer> deleteAddress(@PathVariable Integer id) {
+    public ResponseEntity<Integer> deleteAddress(@PathVariable int id) {
         Optional<Address> address=addressRepository.findById(id);
         boolean isRemoved=addressRepository.deleteById(address);
         if (!isRemoved) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+
+    public User getAuthenticatedUser(){
+        JwtUserDetails userDetails = (JwtUserDetails) SecurityContextHolder.getContext()
+            .getAuthentication().getPrincipal();
+            String userName = userDetails.getUsername();
+            User user = userRepository.findByUsername(userName);
+            return user;
     }
 
 }

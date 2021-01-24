@@ -2,9 +2,16 @@ package com.quest.etna.model;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
+
+import org.springframework.data.annotation.LastModifiedDate;
+
 import java.time.LocalDateTime;
 import java.util.Objects;
-@Entity(name = "address")
+import com.fasterxml.jackson.annotation.*;
+
+
+
+@Entity @Table(name = "address")
 public class Address {
     @Id()
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,8 +27,8 @@ public class Address {
     }
 
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(nullable=false, name = "user_id")
+    @ManyToOne @JoinColumn(nullable=true, name = "user_id")
+    @JsonBackReference
     private User user;
 
     public User getUser() {
@@ -93,6 +100,7 @@ public class Address {
     }
 
     @Column(columnDefinition = "Datetime")
+    @LastModifiedDate
     private LocalDateTime updatedDate;
 
     public LocalDateTime getUpdatedDate() {
@@ -106,7 +114,7 @@ public class Address {
     public Address() {
     }
 
-    public Address(Integer id, String Road, String PostalCode, String City, String Country, LocalDateTime CreationDate, LocalDateTime UpdatedDate) {
+    public Address(int id, String Road, String PostalCode, String City, String Country, LocalDateTime CreationDate, LocalDateTime UpdatedDate) {
         setId(id);
         setRoad(road);
         setPostalCode(postalCode);
@@ -139,7 +147,7 @@ public class Address {
     public String toString() {
         return "Address{" +
                 "id=" + id +
-                ", user=" + user +
+                ", user=" + user+
                 ", road=" + road +
                 ", postal_code=" + postalCode +
                 ", city=" + city +
@@ -147,6 +155,9 @@ public class Address {
                 ", creationDate=" + creationDate +
                 ", updatedDate=" + updatedDate +
                 '}';
+    }
+    public String addressDetails() {
+        return "{\"street\":\"" + this.getRoad() + "\",\"postalCode\":\"" + this.getPostalCode() + "\",\"city\":\"" + this.getCity() + "\",\"pcountry\":\"" + this.getCountry()+  "\"}";
     }
 
 }
