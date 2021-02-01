@@ -41,14 +41,14 @@ public class Address {
 
     @Size(max = 100)
     @Column(nullable = false)
-    private String road;
+    private String street;
 
-    public String getRoad() {
-        return road;
+    public String getStreet() {
+        return street;
     }
 
-    public void setRoad(String road) {
-        this.road = road;
+    public void setStreet(String street) {
+        this.street = street;
     }
 
     @Size(max = 30)
@@ -114,9 +114,9 @@ public class Address {
     public Address() {
     }
 
-    public Address(int id, String Road, String PostalCode, String City, String Country, LocalDateTime CreationDate, LocalDateTime UpdatedDate) {
+    public Address(int id, String Street, String PostalCode, String City, String Country, LocalDateTime CreationDate, LocalDateTime UpdatedDate) {
         setId(id);
-        setRoad(road);
+        setStreet(street);
         setPostalCode(postalCode);
         setCity(city);
         setCountry(country);
@@ -130,7 +130,7 @@ public class Address {
         if (o == null || getClass() != o.getClass()) return false;
         Address address = (Address) o;
         return getId() == address.getId() &&
-                getRoad().equals(address.getRoad()) &&
+                getStreet().equals(address.getStreet()) &&
                 getPostalCode().equals(address.getPostalCode()) &&
                 getCountry().equals(address.getCountry()) &&
                 getCity().equals(address.getCity()) &&
@@ -140,7 +140,7 @@ public class Address {
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(),getUser(), getRoad(), getPostalCode(), getCity(), getCountry(), getCreationDate(), getUpdatedDate());
+        return Objects.hash(getId(),getUser(), getStreet(), getPostalCode(), getCity(), getCountry(), getCreationDate(), getUpdatedDate());
     }
 
     @Override
@@ -148,7 +148,7 @@ public class Address {
         return "Address{" +
                 "id=" + id +
                 ", user=" + user+
-                ", road=" + road +
+                ", road=" + street +
                 ", postal_code=" + postalCode +
                 ", city=" + city +
                 ", country=" + country +
@@ -157,7 +157,7 @@ public class Address {
                 '}';
     }
     public String addressDetails() {
-        return "{\"street\":\"" + this.getRoad() + "\",\"postalCode\":\"" + this.getPostalCode() + "\",\"city\":\"" + this.getCity() + "\",\"pcountry\":\"" + this.getCountry()+  "\"}";
+        return "{\"id\":\"" + this.getId() + "\", \"street\":\"" + this.getStreet() + "\",\"postalCode\":\"" + this.getPostalCode() + "\",\"city\":\"" + this.getCity() + "\",\"country\":\"" + this.getCountry()+  "\"}";
     }
 
 }

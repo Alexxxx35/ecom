@@ -24,7 +24,11 @@ public class AddressController {
 
     @GetMapping(value = "/address/{id}")
     public ResponseEntity<Object> findById(@PathVariable int id) {
-        User user = getAuthenticatedUser(); 
+        User user = getAuthenticatedUser();
+        boolean exist=addressRepository.existsById(id);
+        if (!exist){
+            return new ResponseEntity<> (addressRepository.findById(id),HttpStatus.NOT_FOUND);
+        }
         if (user.getRole()== UserRole.ROLE_ADMIN){
             return new ResponseEntity<> (addressRepository.findById(id),HttpStatus.OK);
         } 
@@ -48,7 +52,7 @@ public class AddressController {
     @PostMapping(value = "/address",produces = "application/json")
     public ResponseEntity<Object> createAddress(@RequestBody Address address) {
         try {
-            if (address.getRoad() == null || address.getCity() == null || address.getCountry() == null || address.getPostalCode() == null) {
+            if (address.getStreet() == null || address.getCity() == null || address.getCountry() == null || address.getPostalCode() == null) {
                 throw new Exception("No valid data");
             }
 
@@ -85,8 +89,8 @@ public class AddressController {
                 addressRepository.setAddressPostalCodeById(id, newAddress.getPostalCode());
                 modified = true;
             }
-            if(newAddress.getRoad() != null) {
-                addressRepository.setAddressRoadById(id, newAddress.getRoad());
+            if(newAddress.getStreet() != null) {
+                addressRepository.setAddressStreetById(id, newAddress.getStreet());
                 modified = true;
             }
         }
@@ -111,10 +115,10 @@ public class AddressController {
 
         if (user.getRole()==UserRole.ROLE_ADMIN || address.getUser().getId()==user.getId()){
             addressRepository.deleteById(id);  
-            return new ResponseEntity<>("{\"success\": \"TRUE\"}",HttpStatus.OK);
+            return new ResponseEntity<>("{\"success\": true }",HttpStatus.OK);
         }
         else{
-            return new ResponseEntity<>("{\"success\": \"FALSE\"}",HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>("{\"success\": false }",HttpStatus.UNAUTHORIZED);
         }
         
     }

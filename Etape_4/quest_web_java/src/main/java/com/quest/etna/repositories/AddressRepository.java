@@ -35,8 +35,8 @@ public interface AddressRepository extends CrudRepository<Address, Integer> {
     
     @Transactional
     @Modifying
-    @Query("update Address a set a.road = ?2 where a.id = ?1")
-    void setAddressRoadById(int id,String road);
+    @Query("update Address a set a.street = ?2 where a.id = ?1")
+    void setAddressStreetById(int id,String street);
 
     
     @Transactional
@@ -56,7 +56,6 @@ public interface AddressRepository extends CrudRepository<Address, Integer> {
     @Transactional
     @Modifying
     void deleteById(int id);
-    
-    
+
 
 }
