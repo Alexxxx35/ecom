@@ -187,7 +187,7 @@ public class ControllerTests{
         mockMvc.perform(post("/address")
             .header("Authorization", "Bearer " + token)
             .contentType(MediaType.APPLICATION_JSON)
-                    .content("{\"road\": \"Gerhard\",\"postalCode\": \"92800\",\"city\": \"Puteaux\",\"country\": \"France\"}"))
+                    .content("{\"street\": \"Gerhard\",\"postalCode\": \"92800\",\"city\": \"Puteaux\",\"country\": \"France\"}"))
                     .andDo(MockMvcResultHandlers.print())
                     .andExpect(status().isCreated()); 
             
@@ -221,7 +221,7 @@ public class ControllerTests{
         mockMvc.perform(post("/address")
             .header("Authorization", "Bearer " + token)
             .contentType(MediaType.APPLICATION_JSON)
-                    .content("{\"road\": \"Gerhard\",\"postalCode\": \"92800\",\"city\": \"Puteaux\",\"country\": \"France\"}"))
+                    .content("{\"street\": \"Gerhard\",\"postalCode\": \"92800\",\"city\": \"Puteaux\",\"country\": \"France\"}"))
                     .andDo(MockMvcResultHandlers.print())
                     .andExpect(status().isCreated()); 
         
@@ -266,7 +266,7 @@ public class ControllerTests{
         mockMvc.perform(post("/address")
             .header("Authorization", "Bearer " + token)
             .contentType(MediaType.APPLICATION_JSON)
-                    .content("{\"road\": \"Gerhard\",\"postalCode\": \"92800\",\"city\": \"Puteaux\",\"country\": \"France\"}"))
+                    .content("{\"street\": \"Gerhard\",\"postalCode\": \"92800\",\"city\": \"Puteaux\",\"country\": \"France\"}"))
                     .andDo(MockMvcResultHandlers.print())
                     .andExpect(status().isCreated()); 
 

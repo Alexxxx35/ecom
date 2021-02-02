@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.context.SecurityContextHolder;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @RestController
 public class AddressController {
@@ -25,9 +26,8 @@ public class AddressController {
     @GetMapping(value = "/address/{id}")
     public ResponseEntity<Object> findById(@PathVariable int id) {
         User user = getAuthenticatedUser();
-        boolean exist=addressRepository.existsById(id);
-        if (!exist){
-            return new ResponseEntity<> (addressRepository.findById(id),HttpStatus.NOT_FOUND);
+        if (addressRepository.findById(id).isEmpty()) {
+            return new ResponseEntity<>("{\"Error\": \"NOT FOUND\"}", HttpStatus.NOT_FOUND);
         }
         if (user.getRole()== UserRole.ROLE_ADMIN){
             return new ResponseEntity<> (addressRepository.findById(id),HttpStatus.OK);
@@ -75,8 +75,8 @@ public class AddressController {
     public ResponseEntity<Object> updateAddress(@PathVariable int id,@RequestBody Address newAddress) {
         boolean modified =false;
         User user = getAuthenticatedUser();
-        Address address = addressRepository.findById(id); 
-        if (user.getRole()==UserRole.ROLE_ADMIN || user.getId() == address.getUser().getId()){
+        //Optional<Address> address = addressRepository.findById(id);
+        if (user.getRole()==UserRole.ROLE_ADMIN){
             if(newAddress.getCity() != null){
                 addressRepository.setAddressCityById(id, newAddress.getCity());
                 modified = true;
@@ -107,13 +107,15 @@ public class AddressController {
     public ResponseEntity<Object> deleteAddress(@PathVariable int id) {
         User user = getAuthenticatedUser();
         boolean exist= addressRepository.existsById(id);
+        System.out.println(exist);
+
         if (!exist) {
             return new ResponseEntity<>("{\"success\": \"FALSE\"}",HttpStatus.NOT_FOUND);
         }
-        Address address = addressRepository.findById(id);
+        //Optional<Address> address = addressRepository.findById(id);
 
 
-        if (user.getRole()==UserRole.ROLE_ADMIN || address.getUser().getId()==user.getId()){
+        if (user.getRole()==UserRole.ROLE_ADMIN){
             addressRepository.deleteById(id);  
             return new ResponseEntity<>("{\"success\": true }",HttpStatus.OK);
         }

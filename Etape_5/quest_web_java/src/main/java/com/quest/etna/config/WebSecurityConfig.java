@@ -40,7 +40,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         httpSecurity.exceptionHandling().authenticationEntryPoint(authenticationEntryPoint);
         httpSecurity
                 .cors();
-        
+
         httpSecurity.csrf()
                 .disable()
                 .authorizeRequests()
