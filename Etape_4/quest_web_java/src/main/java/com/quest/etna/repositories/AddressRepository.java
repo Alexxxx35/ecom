@@ -18,7 +18,7 @@ import javax.transaction.Transactional;
 @Repository
 public interface AddressRepository extends CrudRepository<Address, Integer> {
     List<Address> findAll();
-    Address findById(int id);
+    Optional<Address> findById(int id);
     Optional<Address> findByIdAndUser_id(int id,int user_id);
     List<Address> findByUser_id(int user_id);
 

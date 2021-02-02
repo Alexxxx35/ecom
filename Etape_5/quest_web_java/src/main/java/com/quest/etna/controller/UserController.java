@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 public class UserController {
 
@@ -26,12 +25,10 @@ public class UserController {
         return new ResponseEntity<>(userRepository.findById(id), HttpStatus.OK);
 
     }
-
     @GetMapping(value = "/user/")
     public ResponseEntity<Object> getAllUsers() {
         return new ResponseEntity<>(userRepository.findAll(), HttpStatus.OK);
     }
-
 
     @PutMapping(value = "/user/{id}", consumes = "application/json", produces = "application/json")
     public ResponseEntity<Object> updateUser(@PathVariable int id, @RequestBody User newUser) {
@@ -47,12 +44,11 @@ public class UserController {
 
     }
 
-
     @DeleteMapping(value = "/user/{id}", produces = "application/json")
     public ResponseEntity<Object> deleteUser(@PathVariable int id) {
         User user = getAuthenticatedUser();
         if (id != user.getId() && user.getRole() != UserRole.ROLE_ADMIN) {
-            return new ResponseEntity<>("{\"Erreur\": \"Accès non authorisé\"}", HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>("{\"Erreur\": \"Unauthorized access\"}", HttpStatus.UNAUTHORIZED);
         }
         if (user.getId() == id || user.getRole() == UserRole.ROLE_ADMIN) {
             userRepository.deleteById(id);
@@ -64,7 +60,6 @@ public class UserController {
             return new ResponseEntity<>("{\"success\": true }", HttpStatus.OK);
         }
     }
-
 
     public User getAuthenticatedUser() {
         JwtUserDetails userDetails = (JwtUserDetails) SecurityContextHolder.getContext()

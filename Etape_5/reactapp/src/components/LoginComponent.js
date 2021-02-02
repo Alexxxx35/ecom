@@ -2,12 +2,12 @@ import React, { Component } from "react";
 import axios from "axios";
 
 class login extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
 
     this.state = {
-      username: "admin",
-      password: "admin"
+      username: "username",
+      password: "password"
     };
     this.handleFormSubmit = this.handleFormSubmit.bind(this);
   }

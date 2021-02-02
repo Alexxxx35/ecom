@@ -20,7 +20,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
-
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 public class AuthenticationController {
 

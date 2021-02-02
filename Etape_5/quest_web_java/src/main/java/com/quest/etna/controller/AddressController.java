@@ -110,7 +110,7 @@ public class AddressController {
         System.out.println(exist);
 
         if (!exist) {
-            return new ResponseEntity<>("{\"success\": \"FALSE\"}",HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("{\"success\": false }",HttpStatus.NOT_FOUND);
         }
         //Optional<Address> address = addressRepository.findById(id);
 
