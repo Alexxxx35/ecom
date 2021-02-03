@@ -20,18 +20,18 @@ public interface UserRepository extends CrudRepository<User, Integer> {
     boolean existsByUsername(String username);
 
     @Transactional
-    @Modifying
+    @Modifying(clearAutomatically = true)
     @Query("update User u set u.username= ?2 where u.id = ?1")
     void setUsernameById(int id,String username);
 
     @Transactional
-    @Modifying
+    @Modifying(clearAutomatically = true)
     @Query("update User u set u.role= ?2 where u.id = ?1")
     void setRoleById(int id,UserRole userRole);
 
 
     @Transactional
-    @Modifying
+    @Modifying(clearAutomatically = true)
     void deleteById(int id);
 
 

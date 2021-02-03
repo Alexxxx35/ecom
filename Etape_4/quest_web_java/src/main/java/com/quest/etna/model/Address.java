@@ -3,6 +3,7 @@ package com.quest.etna.model;
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDateTime;

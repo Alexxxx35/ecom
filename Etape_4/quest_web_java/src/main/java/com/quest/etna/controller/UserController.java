@@ -16,7 +16,7 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
-    @GetMapping(value = "/user/{id}")
+    @GetMapping(value = "/user/{id}", produces = "application/json")
     public ResponseEntity<Object> getUserById(@PathVariable Integer id) {
         //System.out.println(userRepository.findById(id).isPresent());
         if (userRepository.findById(id).isEmpty()) {

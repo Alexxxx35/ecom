@@ -12,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.context.SecurityContextHolder;
+
+import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -23,7 +25,7 @@ public class AddressController {
     @Autowired
     private UserRepository userRepository;
 
-    @GetMapping(value = "/address/{id}")
+    @GetMapping(value = "/address/{id}", produces = "application/json")
     public ResponseEntity<Object> findById(@PathVariable int id) {
         User user = getAuthenticatedUser();
         if (addressRepository.findById(id).isEmpty()) {
@@ -75,8 +77,9 @@ public class AddressController {
     public ResponseEntity<Object> updateAddress(@PathVariable int id,@RequestBody Address newAddress) {
         boolean modified =false;
         User user = getAuthenticatedUser();
-        //Optional<Address> address = addressRepository.findById(id);
-        if (user.getRole()==UserRole.ROLE_ADMIN){
+        Address address = addressRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(""+id));
+
+        if (user.getRole()==UserRole.ROLE_ADMIN|| user.getId()==address.getUser().getId()){
             if(newAddress.getCity() != null){
                 addressRepository.setAddressCityById(id, newAddress.getCity());
                 modified = true;
@@ -98,7 +101,7 @@ public class AddressController {
             return new ResponseEntity<>(addressRepository.findById(id),HttpStatus.UNAUTHORIZED);
         }
         
-        if (modified) addressRepository.setAddressUpdatedDateById(id, LocalDateTime.now()); 
+        if (modified) addressRepository.setAddressUpdatedDateById(id, LocalDateTime.now());
         return new ResponseEntity<>(addressRepository.findById(id),HttpStatus.OK);
     }
 
@@ -112,10 +115,10 @@ public class AddressController {
         if (!exist) {
             return new ResponseEntity<>("{\"success\": false }",HttpStatus.NOT_FOUND);
         }
-        //Optional<Address> address = addressRepository.findById(id);
+        Address address = addressRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(""+id));
 
 
-        if (user.getRole()==UserRole.ROLE_ADMIN){
+        if (user.getRole()==UserRole.ROLE_ADMIN || user.getId()==address.getUser().getId()){
             addressRepository.deleteById(id);  
             return new ResponseEntity<>("{\"success\": true }",HttpStatus.OK);
         }

@@ -24,29 +24,29 @@ public interface AddressRepository extends CrudRepository<Address, Integer> {
 
     
     @Transactional
-    @Modifying
+    @Modifying(clearAutomatically = true)
     @Query("update Address a set a.city = ?2 where a.id = ?1")
     void setAddressCityById(int id,String city);
     
     @Transactional
-    @Modifying
+    @Modifying(clearAutomatically = true)
     @Query("update Address a set a.country = ?2 where a.id = ?1")
     void setAddressCountryById(int id,String country);
     
     @Transactional
-    @Modifying
+    @Modifying(clearAutomatically = true)
     @Query("update Address a set a.street = ?2 where a.id = ?1")
     void setAddressStreetById(int id,String street);
 
     
     @Transactional
-    @Modifying
+    @Modifying(clearAutomatically = true)
     @Query("update Address a set a.postalCode = ?2 where a.id = ?1")
     void setAddressPostalCodeById(int id,String postal_code);
 
     
     @Transactional
-    @Modifying
+    @Modifying(clearAutomatically = true)
     @Query("update Address a set a.updatedDate  = ?2 where a.id = ?1")
     void setAddressUpdatedDateById(int id,LocalDateTime time);
 
@@ -54,7 +54,7 @@ public interface AddressRepository extends CrudRepository<Address, Integer> {
 
 
     @Transactional
-    @Modifying
+    @Modifying(clearAutomatically = true)
     void deleteById(int id);
 
 
