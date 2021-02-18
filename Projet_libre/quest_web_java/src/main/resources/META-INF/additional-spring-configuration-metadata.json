@@ -1,0 +1,13 @@
+{
+  "properties": [
+    {
+      "name": "jwt.secret",
+      "type": "java.lang.String",
+      "description": "Description for jwt.secret."
+    },
+    {
+      "name": "Access-Control-Allow-Origin",
+      "type": "java.lang.String",
+      "description": "Description for Access-Control-Allow-Origin."
+    }
+  ] }
